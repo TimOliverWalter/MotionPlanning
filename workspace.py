@@ -18,6 +18,7 @@ class Workspace:
         self.robotImage = Image.open(robotImagePath)
         self.robotArray = np.array(self.robotImage)
         self.robotPhoto = ImageTk.PhotoImage(self.robotImage)
+        self.robotBorder = self.getRobotBorder()
 
         self.label = ttk.Label(root, image=self.envPhoto)
 
@@ -36,4 +37,14 @@ class Workspace:
         self.label.pack(side="bottom", fill="both", expand="yes")
 
     def isInCollision(self, x, y):
+
+        if self.envArray[y, x][0] != 255:
+            return True
+
         return False
+
+    def getRobotBorder(self):
+
+        for x in range(0, len(self.robotArray)):
+            if self.robotArray[0, x] != 255:
+                pass
