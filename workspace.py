@@ -18,7 +18,7 @@ class Workspace:
         self.robotImage = Image.open(robotImagePath)
         self.robotArray = np.array(self.robotImage)
         self.robotPhoto = ImageTk.PhotoImage(self.robotImage)
-        self.robotBorder = self.getRobotBorder()
+        self.robotOutline = self.getRobotsOutline()
 
         self.label = ttk.Label(root, image=self.envPhoto)
 
@@ -37,14 +37,31 @@ class Workspace:
         self.label.pack(side="bottom", fill="both", expand="yes")
 
     def isInCollision(self, x, y):
-
-        if self.envArray[y, x][0] != 255:
-            return True
+        for i in range(len(self.robotOutline)):
+            if self.envArray[y+self.robotOutline[i][1], x+self.robotOutline[i][0]][0] != 255:
+                return True
 
         return False
 
-    def getRobotBorder(self):
+    def getRobotsOutline(self):
+        outlineCoordinates = np.empty((0, 2), int)
 
-        for x in range(0, len(self.robotArray)):
-            if self.robotArray[0, x] != 255:
-                pass
+        for x in range(len(self.robotArray)):
+            for y in range(len(self.robotArray[0])):
+                if self.robotArray[x][y][0] <= 250 and self.pixelIsPartOfRobotsOutline(x, y):
+                    outlineCoordinates = np.append(outlineCoordinates, np.array([[x, y]]), axis=0)
+
+        return outlineCoordinates
+
+
+    def pixelIsPartOfRobotsOutline(self, x, y):
+        if x == 0 or y == 0:
+            return True
+        if x == len(self.robotArray)-1 or y == len(self.robotArray)-1:
+            return True
+        if self.robotArray[x-1][y][0] >= 250 or self.robotArray[x+1][y][0] >= 250:
+            return True
+        if self.robotArray[x][y-1][0] >= 250 or self.robotArray[x][y+1][0] >= 250:
+            return True
+
+        return False
