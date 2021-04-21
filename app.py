@@ -22,7 +22,7 @@ def demo():
     nb.grid(column=0)
 
     workspace = Workspace("./resources/robot_BW_small.bmp", "./resources/Room_BW_small.bmp", page1)
-    configspace = Configspace(page2)
+    configspace = Configspace(page2, workspace=workspace)
     controller = Controller(workspace, configspace)
 
     workspace.drawAll(workspace.currentPos[0], workspace.currentPos[1])
