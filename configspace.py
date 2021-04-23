@@ -1,4 +1,6 @@
 from tkinter import ttk, Canvas, BOTH, CENTER, RAISED
+import numpy as np
+from dijkstar import Graph, find_path
 from collections import deque
 
 
@@ -62,11 +64,11 @@ class Configspace:
 
     def setIntialSolutionPath(self):
         resolution = max(abs(
-            self.initConfig[0] - self.goalConfig[0]), abs(self.goalConfig[1] - self.goalConfig[1]))
+            self.initConfig[0] - self.goalConfig[0]), abs(self.initConfig[1] - self.goalConfig[1]))
 
         self.solutionPath.append(self.initConfig)
 
-        self.sprmPath(self.initConfig, self.goalConfig, 5, 5)
+        self.sprmPath(self.initConfig, self.goalConfig, r=100, n=50)
         for i in range(1, resolution):
             deltaX = round(i * float(self.goalConfig[0] - self.initConfig[0]) / float(resolution))
             deltaY = round(i * float(self.goalConfig[1] - self.initConfig[1]) / float(resolution))
@@ -81,19 +83,60 @@ class Configspace:
         vertices.append(init)
         vertices.append(goal)
 
+        xMin = goal[0]
+        xMax = init[0]
+
+        yMin = goal[1]
+        yMax = init[1]
+
+        if init[0] <= goal[0]:
+            xMin = init[0]
+            xMax = goal[0]
+
+        if init[1] <= goal[1]:
+            yMin = init[1]
+            yMax = goal[1]
+
         for i in range(0, n):
-            vertices.append(self.cFreeSpace(i, n))
+            vertices.append(self.cFreeSpace(xMin, xMax, yMin, yMax))
 
-        print(vertices)
+        for v in vertices:
+            uTemp = self.neighbors(v, vertices, r)
+
+            for u in uTemp:
+                if self.edgeIsValid(u, v):
+                    edges.append((u, v))
 
 
-    def cFreeSpace(self, i, n):
-        deltaX = round(1350/n)
-        deltaY = round(980/n)
+    def cFreeSpace(self, xMin, xMax, yMin, yMax):
+        x = np.random.randint(xMin, xMax)
+        y = np.random.randint(yMin, yMax)
 
-        for j in range(0, i):
-            if self.workspace.isInCollision(i*deltaX, j*deltaY):
+        while self.workspace.isInCollision(x, y):
+            x = np.random.randint(xMin, xMax)
+            y = np.random.randint(yMin, yMax)
+
+        return x, y
+
+    def neighbors(self, v, vertices, r):
+        neighbors = []
+        for vTemp in vertices:
+            if vTemp[0] == v[0] and vTemp[1] == v[1]:
                 continue
+            if np.square(vTemp[0] - v[0]) + np.square(vTemp[1] - v[1]) <= np.square(r):
+                neighbors.append(vTemp)
 
-            else:
-                return (i*deltaX, j*deltaY)
+        return neighbors
+
+    def edgeIsValid(self, u, v):
+        resolution = max(abs(v[0] - u[0]), abs(v[1] - u[1]))
+
+        for i in range(1, resolution):
+            deltaX = round(i * float(u[0] -v[0]) / float(resolution))
+            deltaY = round(i * float(u[1] - v[1]) / float(resolution))
+            newX = v[0] + deltaX
+            newY = v[1] + deltaY
+            if self.workspace.isInCollision(newX, newY):
+                return False
+
+        return True
