@@ -64,12 +64,15 @@ class Configspace:
         pass
 
     def setIntialSolutionPath(self):
+        """TODO: nur Values werden gebraucht / Try-Catch wenn kein Path gefunden"""
         resolution = max(abs(
             self.initConfig[0] - self.goalConfig[0]), abs(self.initConfig[1] - self.goalConfig[1]))
 
         pathSPRM = self.sprmPath(self.initConfig, self.goalConfig, r=100, n=20)
-        print(pathSPRM[0])
-        self.solutionPath.append(pathSPRM[0])
+        print(pathSPRM[0].values)
+        for i in pathSPRM[0]:
+            self.solutionPath.append(i)
+
 
         """self.solutionPath.append(self.initConfig)    
 
