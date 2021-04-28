@@ -1,5 +1,6 @@
 from tkinter import ttk, Canvas, BOTH, CENTER, RAISED
 import numpy as np
+from numpy.linalg import norm
 from dijkstar import Graph, find_path
 from collections import deque
 
@@ -66,16 +67,19 @@ class Configspace:
         resolution = max(abs(
             self.initConfig[0] - self.goalConfig[0]), abs(self.initConfig[1] - self.goalConfig[1]))
 
-        self.solutionPath.append(self.initConfig)
+        pathSPRM = self.sprmPath(self.initConfig, self.goalConfig, r=100, n=20)
+        print(pathSPRM[0])
+        self.solutionPath.append(pathSPRM[0])
 
-        self.sprmPath(self.initConfig, self.goalConfig, r=100, n=50)
+        """self.solutionPath.append(self.initConfig)    
+
         for i in range(1, resolution):
             deltaX = round(i * float(self.goalConfig[0] - self.initConfig[0]) / float(resolution))
             deltaY = round(i * float(self.goalConfig[1] - self.initConfig[1]) / float(resolution))
             newX = self.initConfig[0] + deltaX
             newY = self.initConfig[1] + deltaY
             self.solutionPath.append((newX, newY))
-        self.solutionPath.append(self.goalConfig)
+        self.solutionPath.append(self.goalConfig)"""
 
     def sprmPath(self, init, goal, r, n):
         edges = deque()
@@ -105,8 +109,16 @@ class Configspace:
 
             for u in uTemp:
                 if self.edgeIsValid(u, v):
-                    edges.append((u, v))
+                    weight = np.sqrt(np.square(u[0]-v[0]) + np.square(u[1]-v[1]))
+                    edges.append((u, v, weight))
 
+        graph = Graph()
+        for e in edges:
+            graph.add_edge(e[0], e[1], e[2])
+
+        path = find_path(graph, init, goal)
+
+        return path
 
     def cFreeSpace(self, xMin, xMax, yMin, yMax):
         x = np.random.randint(xMin, xMax)
