@@ -2,7 +2,7 @@ from tkinter import ttk, Canvas, BOTH, CENTER, RAISED
 import numpy as np
 from dijkstar import Graph, find_path
 from collections import deque
-
+import time
 
 class Configspace:
 
@@ -63,17 +63,18 @@ class Configspace:
         pass
 
     def setIntialSolutionPath(self):
-        """TODO: nur Values werden gebraucht / Try-Catch wenn kein Path gefunden"""
         resolution = max(abs(
             self.initConfig[0] - self.goalConfig[0]), abs(self.initConfig[1] - self.goalConfig[1]))
 
-        pathSPRM = self.sprmPath(self.initConfig, self.goalConfig, r=100, n=20)
+        pathSPRM = self.sprmPath(self.initConfig, self.goalConfig, r=20, n=10)
 
-        if len(pathSPRM) > 1:
+        pathRRT = self.pathRRT(self.initConfig, self.goalConfig, rangeMax=50, timeMax=300)
+
+        """if len(pathSPRM) > 1:
             self.solutionPath = pathSPRM[0]
         else:
             self.solutionPath.append(self.initConfig)
-            """for i in range(1, resolution):
+            for i in range(1, resolution):
                 deltaX = round(i * float(self.goalConfig[0] - self.initConfig[0]) / float(resolution))
                 deltaY = round(i * float(self.goalConfig[1] - self.initConfig[1]) / float(resolution))
                 newX = self.initConfig[0] + deltaX
@@ -155,3 +156,17 @@ class Configspace:
                 return False
 
         return True
+
+    def pathRRT(self, init, goal, rangeMax, timeMax):
+        rrtTree = {0 : init}
+
+        startTime = time.time()
+        while time.time() < startTime + timeMax:
+            cRand = self.cFreeSpace(0, 1350, 0, 980)
+
+
+
+
+
+
+
