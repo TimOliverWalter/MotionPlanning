@@ -3,6 +3,7 @@ import numpy as np
 from dijkstar import Graph, find_path
 from collections import deque
 import time
+from sklearn import neighbors
 
 class Configspace:
 
@@ -66,7 +67,7 @@ class Configspace:
         resolution = max(abs(
             self.initConfig[0] - self.goalConfig[0]), abs(self.initConfig[1] - self.goalConfig[1]))
 
-        pathSPRM = self.sprmPath(self.initConfig, self.goalConfig, r=20, n=10)
+        #pathSPRM = self.sprmPath(self.initConfig, self.goalConfig, r=20, n=10)
 
         pathRRT = self.pathRRT(self.initConfig, self.goalConfig, rangeMax=50, timeMax=300)
 
@@ -158,11 +159,25 @@ class Configspace:
         return True
 
     def pathRRT(self, init, goal, rangeMax, timeMax):
-        rrtTree = {0 : init}
+        T = np.array([init])
 
         startTime = time.time()
         while time.time() < startTime + timeMax:
-            cRand = self.cFreeSpace(0, 1350, 0, 980)
+            cRand = self.cFreeSpace(0, 1302, 0, 932) # -robotsize
+            T = np.append(T, [cRand], axis=0)
+
+            tree = neighbors.KDTree(T)
+            neighbourIndex = tree.query(T[-1:], k=2, return_distance=False)[0][1]
+            cNear = T[neighbourIndex]
+            T = T[:-1]
+
+            # how to get valid edge
+
+
+
+
+
+
 
 
 
