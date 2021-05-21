@@ -163,7 +163,7 @@ class Configspace:
 
         startTime = time.time()
         while time.time() < startTime + timeMax:
-            cRand = self.cFreeSpace(0, 1302, 0, 932) # -robotsize
+            cRand = np.array(self.cFreeSpace(0, 1302, 0, 932)) # -robotsize
             T = np.append(T, [cRand], axis=0)
 
             tree = neighbors.KDTree(T)
@@ -171,7 +171,58 @@ class Configspace:
             cNear = T[neighbourIndex]
             T = T[:-1]
 
-            # how to get valid edge
+            cNew = self.getValidEdge(cNear=cNear, cRand=cRand, rangeMax=rangeMax)
+
+
+    def getValidEdge(self, cNear, cRand, rangeMax):
+
+        distanceNearRand = np.sqrt(np.square(cNear[0] - cRand[0]) + np.square(cNear[1] - cRand[1]))
+
+        if rangeMax >= distanceNearRand:
+            # cNew = cRand
+            #check is edge valid
+            return
+
+        resolution = max(abs(cNear[0] - cRand[0]), abs(cNear[1] - cRand[1]))
+        ratio = rangeMax/distanceNearRand
+        cNew = np.array([cNear[0], cNear[1]])
+        stepX = round(resolution*ratio * float(cRand[0] - cNew[0]) / float(resolution))
+        stepY = round(resolution * ratio * float(cRand[1] - cNew[1]) / float(resolution))
+        cNew[0] = cNew[0] + stepX
+        cNew[1] = cNew[1] + stepY
+
+        if self.edgeIsValid(cNear, cNew):
+            return cNew
+
+        resolution = max(abs(cNear[0] - cNew[0]), abs(cNear[1] - cNew[1]))
+
+        for i in range(1, resolution):
+            deltaX = round(i * float(cNear[0] - cNew[0]) / float(resolution))
+            deltaY = round(i * float(cNear[1] - cNew[1]) / float(resolution))
+            cNew[0] = cNew[0] - deltaX
+            cNew[1] = cNew[1] - deltaY
+
+            if self.edgeIsValid(cNear, cNew):
+                return cNew
+
+
+
+
+
+        """for i in range(1, resolution*ratio):
+            deltaX = round(i * float(u[0] - v[0]) / float(resolution))
+            deltaY = round(i * float(u[1] - v[1]) / float(resolution))
+            newX = v[0] + deltaX
+            newY = v[1] + deltaY
+
+            if np.square(vTemp[0] - v[0]) + np.square(vTemp[1] - v[1]) == np.square(rangeMax)
+
+            if self.workspace.isInCollision(newX, newY):
+                return False
+
+        return True"""
+
+
 
 
 
