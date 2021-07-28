@@ -1,7 +1,8 @@
-from tkinter import Canvas, CENTER
+from tkinter import ttk, Canvas, BOTH, CENTER, RAISED
 import numpy as np
 from dijkstar import Graph, find_path
 from collections import deque
+import time
 
 class Configspace:
 
@@ -27,8 +28,10 @@ class Configspace:
         self.canvas.config(bd=0, height=y + 2 * self.theOffset, width=x + 2 * self.theOffset)
         self.drawSpace()
         self.canvas.place(relx=0.5, rely=0.5, anchor=CENTER)
+        # self.canvas.pack(fill=BOTH, expand=1)
 
     def drawSpace(self):
+        # Open: remove offset, canvas.config offset buggy
         self.canvas.delete("all")
         y = self.yExt
         x = self.xExt
@@ -36,6 +39,7 @@ class Configspace:
         self.canvas.create_line(self.off(0), self.off(0), self.off(x), self.off(0))
         self.canvas.create_line(self.off(x), self.off(y), self.off(x), self.off(0))
         self.canvas.create_line(self.off(x), self.off(y), self.off(0), self.off(y))
+        #self.drawCObs(1350, 980)
 
         if len(self.solutionPath) > 0: self.drawSolutionPath()
         if self.initConfig[0] > -1: self.drawConfiguration(self.initConfig[0], self.initConfig[1], 'green')
@@ -62,9 +66,11 @@ class Configspace:
         resolution = max(abs(
             self.initConfig[0] - self.goalConfig[0]), abs(self.initConfig[1] - self.goalConfig[1]))
 
-        pathSPRM = self.sprmPath(self.initConfig, self.goalConfig, r=20, n=100)
+        pathSPRM = self.sprmPath(self.initConfig, self.goalConfig, r=20, n=10)
 
-        if len(pathSPRM) > 1:
+        pathRRT = self.pathRRT(self.initConfig, self.goalConfig, rangeMax=50, timeMax=300)
+
+        """if len(pathSPRM) > 1:
             self.solutionPath = pathSPRM[0]
         else:
             self.solutionPath.append(self.initConfig)
@@ -74,7 +80,7 @@ class Configspace:
                 newX = self.initConfig[0] + deltaX
                 newY = self.initConfig[1] + deltaY
                 self.solutionPath.append((newX, newY))
-            self.solutionPath.append(self.goalConfig)
+            self.solutionPath.append(self.goalConfig)"""
 
     def sprmPath(self, init, goal, r, n):
         edges = deque()
@@ -151,6 +157,12 @@ class Configspace:
 
         return True
 
+    def pathRRT(self, init, goal, rangeMax, timeMax):
+        rrtTree = {0 : init}
+
+        startTime = time.time()
+        while time.time() < startTime + timeMax:
+            cRand = self.cFreeSpace(0, 1350, 0, 980)
 
 
 
