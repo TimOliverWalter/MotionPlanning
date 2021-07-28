@@ -1,13 +1,9 @@
 import tkinter
-from tkinter import ttk, RIGHT, Canvas, BOTH, Scale, HORIZONTAL
+from tkinter import ttk, Scale, HORIZONTAL
 from workspace import Workspace
 from configspace import Configspace
 from controller import Controller
-from PIL import ImageTk, Image
-import os
 from utils import setBackgroundColor
-import numpy as np
-from sklearn import neighbors
 
 
 
@@ -70,13 +66,5 @@ def demo():
     root.mainloop()
 
 
-def testKDTree():
-    X = np.array([[7, 1], [3, 2], [1, 5], [0, 8], [7, 4], [5, 5], [8, 4], [6, 2]])
-    tree = neighbors.KDTree(X)
-    index = tree.query(X[7:], k=2, return_distance=False)[0][1]
-    print(index)
-
-
 if __name__ == "__main__":
     demo()
-    #testKDTree()

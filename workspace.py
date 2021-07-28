@@ -1,10 +1,6 @@
 import numpy as np
-from PIL import Image, ImageTk, ImageColor
-from io import BytesIO
-from tkinter import ttk, Canvas, NW
-import os
-from configspace import Configspace
-from utils import isPixelWhite
+from PIL import Image, ImageTk
+from tkinter import ttk
 
 
 class Workspace:

@@ -1,8 +1,7 @@
-from tkinter import ttk, Canvas, BOTH, CENTER, RAISED
+from tkinter import Canvas, CENTER
 import numpy as np
 from dijkstar import Graph, find_path
 from collections import deque
-import time
 
 class Configspace:
 
