@@ -66,11 +66,9 @@ class Configspace:
         resolution = max(abs(
             self.initConfig[0] - self.goalConfig[0]), abs(self.initConfig[1] - self.goalConfig[1]))
 
-        pathSPRM = self.sprmPath(self.initConfig, self.goalConfig, r=20, n=10)
+        pathSPRM = self.sprmPath(self.initConfig, self.goalConfig, r=20, n=100)
 
-        pathRRT = self.pathRRT(self.initConfig, self.goalConfig, rangeMax=50, timeMax=300)
-
-        """if len(pathSPRM) > 1:
+        if len(pathSPRM) > 1:
             self.solutionPath = pathSPRM[0]
         else:
             self.solutionPath.append(self.initConfig)
@@ -80,7 +78,7 @@ class Configspace:
                 newX = self.initConfig[0] + deltaX
                 newY = self.initConfig[1] + deltaY
                 self.solutionPath.append((newX, newY))
-            self.solutionPath.append(self.goalConfig)"""
+            self.solutionPath.append(self.goalConfig)
 
     def sprmPath(self, init, goal, r, n):
         edges = deque()
@@ -157,12 +155,6 @@ class Configspace:
 
         return True
 
-    def pathRRT(self, init, goal, rangeMax, timeMax):
-        rrtTree = {0 : init}
-
-        startTime = time.time()
-        while time.time() < startTime + timeMax:
-            cRand = self.cFreeSpace(0, 1350, 0, 980)
 
 
 
