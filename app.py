@@ -1,9 +1,9 @@
 import tkinter
 from tkinter import ttk, Scale, HORIZONTAL
-from workspace import Workspace
-from configspace import Configspace
-from controller import Controller
-from utils import setBackgroundColor
+from pages.workspace import Workspace
+from pages.configspace import Configspace
+from components.controller import Controller
+from utils.utils import setBackgroundColor
 
 
 

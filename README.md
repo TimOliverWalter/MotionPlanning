@@ -1,5 +1,7 @@
 # Projekt Motion Planning
-Entwicklung einer Kollisionserkennungssoftware für einen Saugroboter. \
-Entwickler:
-* Philipp Dörich
-* Tim Oliver Walter
+Collision detection software for a robot vacuum cleaner.
+
+## Running
+```
+python app.py
+```
